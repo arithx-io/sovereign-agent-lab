@@ -1,0 +1,27 @@
+5-Model Comparison on Distractor Dataset (plain vs XML, max_tokens=60)
+
+--- google/gemma-2-2b-it ---
+  plain  | Y |  214 tok | Haymarket Vaults
+  xml    | Y |  316 tok | The Haymarket Vaults
+
+--- Qwen/Qwen3-32B ---
+  plain  | Y |  259 tok | (thinking dump, cut off at 60 tokens)
+  xml    | Y |  349 tok | (thinking dump, cut off at 60 tokens)
+
+--- meta-llama/Llama-3.3-70B-Instruct ---
+  plain  | Y |  213 tok | The Haymarket Vaults
+  xml    | Y |  302 tok | The Albanach
+
+--- deepseek-ai/DeepSeek-R1-0528 ---
+  plain  | N |  251 tok | (reasoning consumed entire token budget)
+  xml    | N |  341 tok | (reasoning consumed entire token budget)
+
+--- NousResearch/Hermes-4-405B ---
+  plain  | Y |  202 tok | The Haymarket Vaults
+  xml    | Y |  292 tok | The Haymarket Vaults
+
+Key findings:
+- Only Llama 70B showed the plain/XML venue split
+- Hermes 405B used fewest tokens despite being largest
+- Reasoning models (DeepSeek R1, Qwen 32B) performed worst
+- Gemma 2B outperformed models 100x its size on instruction following

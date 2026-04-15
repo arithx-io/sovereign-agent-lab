@@ -52,8 +52,12 @@ PART_B_HARDEST_DISTRACTOR = """
 The Holyrood Arms is the harder distractor because it matches on both capacity (160)
 and vegan options (yes), failing only on status being full. A model skimming for
 numerical and dietary matches could easily select it without carefully checking the
-availability status field. The New Town Vault is less dangerous because it fails on
-vegan (no), which is a more prominent constraint in the question.
+availability status field. I confirmed this experimentally: when Haymarket was
+removed from the list, Gemma 2B consistently picked Holyrood Arms. In isolation
+tests, both models handled capacity comparisons (even 159 vs 160) and vegan checks
+correctly, but status was the constraint that broke under noise. The New Town Vault
+is less dangerous because it fails on vegan (no), which is a more prominent
+constraint in the question.
 """
 
 # ── Part C ─────────────────────────────────────────────────────────────────

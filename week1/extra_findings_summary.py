@@ -145,4 +145,29 @@ Findings:
     formatting alone. This aligns with the lecture point that prompt
     engineering for system prompts (agent developers) still matters,
     even if it matters less for end users.
+
+─────────────────────────────────────────────────────────────────────────────
+EXPERIMENT 6: Constraint Isolation — Capacity vs Status
+─────────────────────────────────────────────────────────────────────────────
+Test: Which constraint does Gemma 2B actually fail on? Isolate each one.
+
+Setup: 2 venues, both vegan=yes and status=available, different capacities.
+
+Results:
+  capacity 150 vs 180:         Gemma 2B correct (Albanach), Llama 70B correct
+  capacity 159 vs 160:         Gemma 2B correct (Albanach), Llama 70B correct
+  capacity 160 vs 159 reversed: Gemma 2B correct (Albanach), Llama 70B correct
+
+Findings:
+  - Both models handle numerical capacity comparison perfectly, even at
+    the 159/160 boundary (1 guest difference).
+  - Vegan (binary yes/no) is also handled correctly by both models.
+  - The failure is specifically the status field under noise. When there
+    are 8+ venues with near-miss distractors, Gemma 2B ignores status=full
+    and picks the closest numerical match.
+  - Constraint difficulty hierarchy for weak models:
+    numerical comparison > binary field > semantic field.
+    As noise grows, the semantic constraint (status) drops first.
+  - This confirms the PART_B_HARDEST_DISTRACTOR prediction: Holyrood Arms
+    is dangerous because it fails only on status, the weakest-checked field.
 """

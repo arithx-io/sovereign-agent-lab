@@ -27,7 +27,7 @@ TASK_A_CATERING_COST_GBP = 5600.0
 TASK_A_OUTDOOR_OK = True
 
 # Optional — anything unexpected.
-TASK_A_NOTES = "Used default Qwen/Qwen3-32B. The agent checked both The Albanach and The Haymarket Vaults — both met all constraints — but chose The Albanach for the flyer without comparing the two."
+TASK_A_NOTES = "Used default Qwen/Qwen3-32B. The agent checked both The Albanach and The Haymarket Vaults, both met all constraints, but chose The Albanach for the flyer without comparing the two. The agent knew which venues to check because the tool docstring lists them explicitly: 'Known venues: The Albanach, The Haymarket Vaults, The Guilford Arms, The Bow Bar.' Without that line, it would have had no way to call check_pub_availability with the right names."
 
 # ── Task B ─────────────────────────────────────────────────────────────────
 
@@ -146,10 +146,28 @@ twice, then calculate_catering_cost and got £5600, then
 get_edinburgh_weather and got 11.8°C, partly cloudy, outdoor_ok true, then
 generate_event_flyer and got a placeholder result. Five calls, one pass,
 zero human steering. The agent figured out the order itself and executed it
-cleanly.
+cleanly. Each of those calls sent the full conversation history from all
+previous steps. By the fifth call the model was processing every tool
+result from the first four plus its own reasoning. The cost is not the
+final context size, it is the sum of all intermediate contexts, which
+grows faster than the conversation itself.
+
+It also knew which pubs to try because the tool description lists them.
+The agent does not have independent knowledge of Edinburgh venues. It
+read the tool schema. That is context engineering at the tool level,
+not just at the prompt level.
+
+The agent also claimed "Quiet corner suitable for webinar" in its final
+answer, but check_pub_availability has no parameter for that. The tool
+returns capacity, vegan, status, and address. Nothing about quiet corners.
+The agent asserted something it had no tool to verify. That is a subtle
+form of hallucination that passes unnoticed because it sounds plausible
+in context.
 
 That is what surprised me: it was genuinely autonomous, but it was optimizing
 for "good enough" rather than "best". It found a workable answer and kept
-going. In a real booking workflow that is risky, because the first acceptable
-venue can become the final venue without any real comparison step.
+going, including claims it could not back up. In a real booking workflow
+that is risky, because the first acceptable venue can become the final
+venue without any real comparison step, and unverified assumptions get
+baked into the recommendation.
 """

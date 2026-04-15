@@ -29,21 +29,27 @@ When I changed The Albanach's status from 'available' to 'full' in
 mcp_venue_server.py, Query 1 returned only 1 match (The Haymarket Vaults at
 1 Dalry Road) instead of the original 2 matches (Albanach + Haymarket). The
 Albanach was filtered out by the server-side search because it was no longer
-available. Crucially, exercise4_mcp_client.py was not modified at all — the
+available. Crucially, exercise4_mcp_client.py was not modified at all, the
 agent code stayed identical. The agent then recommended Haymarket Vaults as
 the best match instead of Albanach. This demonstrates that MCP decouples
 data from agent logic: you update one file (the server) and every connected
 client sees the new state instantly without any code changes on their side.
+
+The trace also shows resilience to tool errors. Query 1 hit 2 pydantic
+validation errors before the agent figured out the correct argument format
+(wrapping parameters inside an 'input' key). Query 2 hit 1 error before
+recovering. The agent learned from its own failures within the same session
+without any human correction.
 """
 
 # ── MCP vs hardcoded ───────────────────────────────────────────────────────
 
-LINES_OF_TOOL_CODE_EX2 = 5    # exercise2_langgraph.py: 4 import lines + 1 run_research_agent call — tool definitions live in venue_tools.py
-LINES_OF_TOOL_CODE_EX4 = 50   # exercise4_mcp_client.py: ~23 lines _make_mcp_caller + ~16 discover_tools + ~11 extract_trace — zero tool definitions
+LINES_OF_TOOL_CODE_EX2 = 5    # exercise2_langgraph.py: 4 import lines + 1 run_research_agent call - tool definitions live in venue_tools.py
+LINES_OF_TOOL_CODE_EX4 = 50   # exercise4_mcp_client.py: ~23 lines _make_mcp_caller + ~16 discover_tools + ~11 extract_trace - zero tool definitions
 
 # What does MCP buy you beyond "the tools are in a separate file"? Min 30 words.
 MCP_VALUE_PROPOSITION = """
-MCP provides dynamic tool discovery — the client connects, calls list_tools(),
+MCP provides dynamic tool discovery - the client connects, calls list_tools(),
 and wraps whatever it finds as LangChain StructuredTools at runtime. This means
 you can add, remove, or change tools on the server without touching any client
 code. My experiment proved this: I changed one venue's status in the MCP server
@@ -57,7 +63,7 @@ you maintain 3 clients + 10 MCP server tools = 13 things. When venue data
 changes, every client sees the update with zero code changes on their side.
 """
 
-# ── PyNanoClaw architecture — SPECULATION QUESTION ─────────────────────────
+# ── PyNanoClaw architecture - SPECULATION QUESTION ─────────────────────────
 
 WEEK_5_ARCHITECTURE = """
 - The Planner is a strong-reasoning model (e.g. Qwen3-Next-80B-Thinking or

@@ -1,0 +1,142 @@
+{
+  "google/gemma-2-2b-it": {
+    "0": {
+      "beginning": {
+        "answer": "The Holyrood Arms",
+        "tokens": 326,
+        "found_albanach": false
+      },
+      "middle": {
+        "answer": "The Holyrood Arms",
+        "tokens": 326,
+        "found_albanach": false
+      },
+      "end": {
+        "answer": "The Holyrood Arms",
+        "tokens": 326,
+        "found_albanach": false
+      }
+    },
+    "20": {
+      "beginning": {
+        "answer": "The Holyrood Arms",
+        "tokens": 929,
+        "found_albanach": false
+      },
+      "middle": {
+        "answer": "The Albanach",
+        "tokens": 928,
+        "found_albanach": true
+      },
+      "end": {
+        "answer": "The Holyrood Arms",
+        "tokens": 929,
+        "found_albanach": false
+      }
+    },
+    "50": {
+      "beginning": {
+        "answer": "The Albanach",
+        "tokens": 1848,
+        "found_albanach": true
+      },
+      "middle": {
+        "answer": "The Albanach",
+        "tokens": 1848,
+        "found_albanach": true
+      },
+      "end": {
+        "answer": "The Shield 19",
+        "tokens": 1850,
+        "found_albanach": false
+      }
+    },
+    "100": {
+      "beginning": {
+        "answer": "The Oak 15",
+        "tokens": 3391,
+        "found_albanach": false
+      },
+      "middle": {
+        "answer": "The Forge 31",
+        "tokens": 3391,
+        "found_albanach": false
+      },
+      "end": {
+        "answer": "The Forge 81",
+        "tokens": 3391,
+        "found_albanach": false
+      }
+    }
+  },
+  "meta-llama/Llama-3.3-70B-Instruct": {
+    "0": {
+      "beginning": {
+        "answer": "The Albanach",
+        "tokens": 315,
+        "found_albanach": true
+      },
+      "middle": {
+        "answer": "The Albanach",
+        "tokens": 315,
+        "found_albanach": true
+      },
+      "end": {
+        "answer": "The Albanach",
+        "tokens": 315,
+        "found_albanach": true
+      }
+    },
+    "20": {
+      "beginning": {
+        "answer": "The Albanach",
+        "tokens": 818,
+        "found_albanach": true
+      },
+      "middle": {
+        "answer": "The Albanach",
+        "tokens": 818,
+        "found_albanach": true
+      },
+      "end": {
+        "answer": "The Albanach",
+        "tokens": 818,
+        "found_albanach": true
+      }
+    },
+    "50": {
+      "beginning": {
+        "answer": "The Albanach",
+        "tokens": 1573,
+        "found_albanach": true
+      },
+      "middle": {
+        "answer": "The Albanach",
+        "tokens": 1573,
+        "found_albanach": true
+      },
+      "end": {
+        "answer": "The Albanach",
+        "tokens": 1573,
+        "found_albanach": true
+      }
+    },
+    "100": {
+      "beginning": {
+        "answer": "The Albanach",
+        "tokens": 2831,
+        "found_albanach": true
+      },
+      "middle": {
+        "answer": "The Albanach",
+        "tokens": 2831,
+        "found_albanach": true
+      },
+      "end": {
+        "answer": "The Albanach",
+        "tokens": 2831,
+        "found_albanach": true
+      }
+    }
+  }
+}

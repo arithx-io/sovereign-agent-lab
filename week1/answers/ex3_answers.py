@@ -58,35 +58,26 @@ Would you like to continue with confirm booking?
 
 # Describe what CALM did after the out-of-scope message. Min 20 words.
 CONVERSATION_3_WHAT_HAPPENED = """
-When I asked about parking mid-flow, CALM recognised that the request was outside
-the scope of the booking confirmation flow. It triggered the handle_out_of_scope
-flow defined in flows.yml, which responded with the utter_out_of_scope message:
-'I can only help with confirming tonight's venue booking. For anything else, please
-contact the event organiser directly.' Then it offered to return to the confirm_booking
-flow by asking 'Would you like to continue with confirm booking?' — preserving the
-conversation state rather than crashing or losing context.
+CALM caught that parking was out of scope. It responded with the utter_out_of_scope
+message from flows.yml, said it can only help with venue booking, and offered to
+continue where we left off. Did not crash or lose the conversation state.
 """
 
 # Compare Rasa CALM's handling of the out-of-scope request to what
 # LangGraph did in Exercise 2 Scenario 3. Min 40 words.
 OUT_OF_SCOPE_COMPARISON = """
-The two agents handled out-of-scope requests very differently. In Exercise 2
-Scenario 3, the LangGraph agent was asked about train times. It had no train tool,
-so it stated it could not answer and suggested external resources (National Rail,
-Trainline, LNER) — but the conversation effectively ended there. There was no
-concept of returning to a previous task.
+Very different. In Exercise 2 Scenario 3, LangGraph was asked about train times.
+It said it could not help, suggested National Rail and Trainline, and that was it.
+The conversation ended there. No way to go back to whatever you were doing before.
 
-Rasa CALM handled it differently: it detected the parking question as out-of-scope,
-delivered a clear boundary message ('I can only help with confirming tonight's venue
-booking'), and then offered to resume the booking flow with 'Would you like to
-continue with confirm booking?'. The conversation state was preserved — guest_count
-was still pending, and the agent was ready to continue collecting slots.
+CALM caught the parking question, said it can only help with booking, and offered
+to continue where we left off. The guest_count was still pending and the agent
+picked right back up. That is because CALM has explicit flows with steps, so it
+can pause for a digression and resume. LangGraph is just one reasoning loop, so
+once it answers, it is done.
 
-This difference reflects their architectures. LangGraph has no concept of 'returning
-to a flow' because it has no explicit flows — it is a single reasoning loop that
-terminates when it has a final answer. Rasa CALM has explicit flows with steps, so
-it can pause, handle a digression, and resume where it left off. For a booking
-confirmation call, CALM's behaviour is clearly more appropriate.
+For a booking confirmation call, CALM is clearly better here. You do not want the
+agent to wander off topic and never come back.
 """
 
 # ── Task B: Cutoff guard ───────────────────────────────────────────────────
@@ -98,58 +89,45 @@ TASK_B_FILES_CHANGED = ["exercise3_rasa/actions/actions.py"]
 
 # How did you test that it works? Min 20 words.
 TASK_B_HOW_YOU_TESTED = """
-I uncommented the four lines of the cutoff guard in actions.py. After fixing an
-initial IndentationError (tabs vs spaces), I temporarily changed the condition to
-'if True:' to force the guard to fire regardless of time. I restarted the action
-server, then ran a booking conversation (160 guests, 40 vegan, 200 deposit). The
-agent escalated immediately with the message: 'I need to check one thing with the
-organiser before I can confirm. The issue is: it is past 16:45 — insufficient time
-to process the confirmation before the 5 PM deadline. Can I call you back within
-15 minutes?' This confirmed the guard works. I then reverted the condition back to
-the real datetime check (if now.hour > 16 or (now.hour == 16 and now.minute >= 45))
-and the guard is now active in its production form.
+Uncommented the four lines in actions.py. Got an IndentationError first (tabs vs
+spaces), fixed that. Then changed the condition to 'if True:' to force it to fire.
+Restarted the action server, ran a conversation with 160 guests, 40 vegan, 200
+deposit. The agent escalated right away with the 16:45 deadline message instead of
+confirming. Reverted back to the real datetime check after.
 """
 
 # ── CALM vs Old Rasa ───────────────────────────────────────────────────────
 
 CALM_VS_OLD_RASA = """
-In old Rasa, slot extraction required a FormValidationAction with regex methods
-like validate_guest_count() to parse 'about 160 people' into 160.0. You also
-needed nlu.yml with intent training examples and rules.yml for dialogue paths.
-The comments at the top of actions.py (lines 1-48) describe this old approach.
+Old Rasa needed regex to turn 'about 160 people' into 160.0, plus nlu.yml
+for intent examples and rules.yml for every dialogue path. A lot of manual
+work just to handle natural speech.
 
-In CALM, the LLM handles all natural language understanding via from_llm slot
-mappings in domain.yml. 'About 50 need vegan', '160 guests', and '500 pound
-deposit' are all parsed without any regex or training examples. Python only
-enforces the business rules (MAX_GUESTS, MAX_DEPOSIT_GBP, vegan ratio).
+CALM hands all of that to the LLM. The from_llm slot mappings in domain.yml
+handle 'about 50 need vegan' or '500 pound deposit' without any regex. Python
+only runs the business rules after the slots are filled.
 
-The simplification is significant: fewer files, no regex maintenance, and the
-agent handles phrasing variations automatically. But the cost is that the LLM
-can sometimes fail to parse — in my run, the first attempt to set vegan_count
-failed because Qwen3's thinking tokens confused the CALM command parser, producing
-'No commands were parsed from the LLM actions.' Old Rasa's regex would not have
-had that problem — it would have either matched or not, deterministically. The
-trade-off is flexibility versus determinism in the language understanding layer.
+The trade-off showed up in my first conversation. Qwen3 emitted thinking tokens
+that confused the CALM command parser, and I got 'No commands were parsed from
+the LLM actions.' Had to repeat myself. Old Rasa regex would have either matched
+or not, no ambiguity. So you gain flexibility in how people phrase things, but
+you lose the determinism in the parsing layer.
 """
 
 # ── The setup cost ─────────────────────────────────────────────────────────
 
 SETUP_COST_VALUE = """
-CALM's setup (config.yml, domain.yml, flows.yml, endpoints.yml, rasa train,
-two terminals, Rasa Pro licence) is significantly heavier than LangGraph, which
-needed just a few lines of Python to create a ReAct agent with create_react_agent().
-But that setup cost bought something specific: the CALM agent cannot improvise.
-It cannot call a tool that is not defined in flows.yml. It cannot skip a business
-rule. It cannot decide to confirm a booking without collecting all three required
-slots (guest_count, vegan_count, deposit_amount_gbp).
+CALM needs config.yml, domain.yml, flows.yml, endpoints.yml, rasa train, two
+terminals, and a licence. That is a lot more setup than LangGraph, which was
+just a few lines of Python with create_react_agent().
 
-In my run, when I asked about parking, CALM deflected with 'I can only help with
-confirming tonight's venue booking' and offered to return to the booking flow. A
-LangGraph agent would have no flow to return to — it would just move on. When the
-deposit was £500, CALM hit the Python guard deterministically and escalated with
-the exact reason. A LangGraph agent might have reasoned around it.
+But the setup bought something real: the CALM agent cannot improvise. It cannot
+call a tool outside flows.yml. It cannot skip collecting guest_count or vegan_count.
+When I asked about parking, it bounced me back to the booking flow. When the deposit
+was £500, the Python guard caught it, not the LLM.
 
-For the confirmation use case — where every word has financial and legal weight —
-the inability to improvise is the feature, not the limitation. The setup cost
-is the price of auditability.
+A LangGraph agent would have no flow to return to after a digression. It might also
+reason around a deposit limit if the prompt did not explicitly forbid it. For a
+booking confirmation where money is on the line, the inability to improvise is
+exactly what you want. The setup cost buys auditability.
 """

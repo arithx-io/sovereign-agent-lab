@@ -64,12 +64,12 @@ clearly not shown as the case with our model which successfully found our
 "needle" with other similar distractors present. 
 
 Additional test outside of scope of the exercise:
-Interstingly enough, I confirmed this experimentally: 
-when Haymarket was removed from the list, Gemma 2B consistently picked 
-Holyrood Arms. In isolation tests, both models handled capacity comparisons 
-(even 159 vs 160) and vegan checks correctly, but status was the constraint 
-that broke under noise. The New Town Vault is less dangerous because it fails 
-on vegan (no), which is a more prominent constraint in the question.
+Interstingly enough, I confirmed this experimentally,when Haymarket was 
+removed from the list, Gemma 2B consistently picked Holyrood Arms. In 
+isolation tests, both models handled capacity comparisons (even 159 vs 160) 
+and vegan checks correctly, but status was the constraint that broke under 
+noise. The New Town Vault is less dangerous because it fails on vegan (no), 
+which is a more prominent constraint in the question.
 """
 
 # ── Part C ─────────────────────────────────────────────────────────────────

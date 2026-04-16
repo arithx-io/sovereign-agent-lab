@@ -27,7 +27,17 @@ TASK_A_CATERING_COST_GBP = 5600.0
 TASK_A_OUTDOOR_OK = True
 
 # Optional — anything unexpected.
-TASK_A_NOTES = "Used default Qwen/Qwen3-32B. The agent checked both The Albanach and The Haymarket Vaults, both met all constraints, but chose The Albanach for the flyer without comparing the two. The agent knew which venues to check because the tool docstring lists them explicitly: 'Known venues: The Albanach, The Haymarket Vaults, The Guilford Arms, The Bow Bar.' Without that line, it would have had no way to call check_pub_availability with the right names."
+TASK_A_NOTES = (
+    "Used default Qwen/Qwen3-32B. The agent checked both "
+    "The Albanach and The Haymarket Vaults, both met all "
+    "constraints, but chose The Albanach for the flyer "
+    "without comparing the two. The agent knew which "
+    "venues to check because the tool docstring lists "
+    "them explicitly: 'Known venues: The Albanach, The "
+    "Haymarket Vaults, The Guilford Arms, The Bow Bar.' "
+    "Without that line, it would have had no way to call "
+    "check_pub_availability with the right names."
+)
 
 # ── Task B ─────────────────────────────────────────────────────────────────
 
@@ -56,7 +66,8 @@ The agent's thinking trace after The Bow Bar returned meets_all_constraints=fals
 stated: "The Bow Bar's capacity is only 80, which is too small. So, they moved on
 to check The Haymarket Vaults." The next action was immediately
 [TOOL_CALL] check_pub_availability({"pub_name": "The Haymarket Vaults",
-"required_capacity": 160, "requires_vegan": true}) — the pivot happened at the
+"required_capacity": 160, "requires_vegan": true}),
+the pivot happened at the
 second tool call with no human intervention.
 """
 
@@ -113,13 +124,15 @@ graph TD;
 # Compare the LangGraph graph to exercise3_rasa/data/flows.yml. Min 30 words.
 TASK_D_COMPARISON = """
 The LangGraph Mermaid graph shows a single generic loop: start -> agent -> tools ->
-agent -> end. The agent node decides everything at runtime — which tool to call, in
+agent -> end. The agent node decides everything at
+runtime: which tool to call, in
 what order, when to stop. All routing is implicit in the LLM's reasoning.
 
 Rasa CALM's flows.yml defines two explicit flows (confirm_booking and
 handle_out_of_scope). confirm_booking has four named steps: collect guest_count,
 collect vegan_count, collect deposit_amount_gbp, then action_validate_booking.
-The LLM only decides which flow to start — after that, Rasa executes the steps
+The LLM only decides which flow to start. After that,
+Rasa executes the steps
 deterministically.
 
 LangGraph gives flexibility but unpredictability. Rasa gives auditability but

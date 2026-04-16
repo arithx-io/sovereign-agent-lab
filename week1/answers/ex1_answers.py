@@ -24,13 +24,19 @@ PART_A_SANDWICH_CORRECT = True
 # Explain what you observed. Minimum 30 words.
 
 PART_A_EXPLANATION = """
-All three formatting conditions (plain, XML, and sandwich) produced correct answers
-on the baseline dataset using Llama-3.3-70B. However, the model chose different
-correct venues depending on the format: plain text led to The Haymarket Vaults,
-while XML and sandwich formats both returned The Albanach. This suggests that even
-when all answers are correct, the structural framing of the data influences which
-valid candidate the model selects first, likely because XML tags change how the
-model attends to each venue entry.
+All three formatting conditions (plain, XML, and sandwich) produced correct 
+answers on the baseline dataset using Llama-3.3-70B. However, the model chose 
+different correct venues depending on the format. Plain text led to 
+The Haymarket Vaults, while XML and sandwich formats both returned The 
+Albanach. The positioning is interesting as well. The Albanach option is in
+the very beginning while The Haymarket Vaults in the end. We do expect the
+information in the end to prevail.  While retrieval
+is great in both cases, the reasoning part is affected by formatting
+condition.
+
+This suggests that even when all answers are correct, the structural framing 
+of the data influences which valid candidate the model selects first, likely 
+because XML tags change how the model attends to each venue entry.
 """
 
 # ── Part B ─────────────────────────────────────────────────────────────────
@@ -49,15 +55,21 @@ PART_B_CHANGED_RESULTS = False
 # Which distractor was more likely to cause a wrong answer, and why?
 # Minimum 20 words.
 PART_B_HARDEST_DISTRACTOR = """
-The Holyrood Arms is the harder distractor because it matches on both capacity (160)
-and vegan options (yes), failing only on status being full. A model skimming for
-numerical and dietary matches could easily select it without carefully checking the
-availability status field. I confirmed this experimentally: when Haymarket was
-removed from the list, Gemma 2B consistently picked Holyrood Arms. In isolation
-tests, both models handled capacity comparisons (even 159 vs 160) and vegan checks
-correctly, but status was the constraint that broke under noise. The New Town Vault
-is less dangerous because it fails on vegan (no), which is a more prominent
-constraint in the question.
+The Holyrood Arms is the harder distractor because it matches on both capacity 
+(160) and vegan options (yes), failing only on status being full. 
+A model skimming for numerical and dietary (binary) matches could easily 
+select it without carefully checking the availability status field (which
+requires "understanding") thus showing the limitations of capacity but
+clearly not shown as the case with our model which successfully found our
+"needle" with other similar distractors present. 
+
+Additional test outside of scope of the exercise:
+Interstingly enough, I confirmed this experimentally: 
+when Haymarket was removed from the list, Gemma 2B consistently picked 
+Holyrood Arms. In isolation tests, both models handled capacity comparisons 
+(even 159 vs 160) and vegan checks correctly, but status was the constraint 
+that broke under noise. The New Town Vault is less dangerous because it fails 
+on vegan (no), which is a more prominent constraint in the question.
 """
 
 # ── Part C ─────────────────────────────────────────────────────────────────
@@ -72,13 +84,14 @@ PART_C_SANDWICH_ANSWER = "The Haymarket Vaults"
 
 # Explain what Part C showed, or why it wasn't needed. Minimum 30 words.
 PART_C_EXPLANATION = """
-Even the much smaller Gemma-2-2B model got all three conditions correct with the
-distractor dataset. This was unexpected because the exercise was designed to show
-formatting effects on weaker models. The signal-to-noise ratio in this dataset is
-still high enough that even a 2B parameter model can reliably filter venues by
-three constraints (capacity, vegan, status). The effect that the Stanford lost-in-
-the-middle paper describes may require a longer context or more numerous and subtle
-distractors to appear with this particular task.
+Even the much smaller Gemma-2-2B model got all three conditions correct with 
+the distractor dataset. This was unexpected because the exercise was designed 
+to show formatting effects on weaker models. The signal-to-noise ratio in 
+this dataset is still high enough that even a 2B parameter model can reliably 
+filter venues by three constraints (capacity, vegan, status). The effect 
+that the Stanford lost-in-the-middle paper describes may require a longer 
+context or more numerous and subtle distractors to appear with this 
+particular task.
 """
 
 # ── Core lesson ────────────────────────────────────────────────────────────
@@ -108,8 +121,11 @@ clean list like this, it mostly nudged attention. In a real agent system full
 of tool outputs, chat history, and repeated instructions, that same nudge is
 where structure starts preventing actual mistakes.
 
-I ran an extra test on the distractor dataset across five models to see if
-this held up. Gemma 2B at 214 tokens, Llama 70B at 213, and Hermes 405B at
+I ran an extra test on the distractor dataset across five
+models to see if this held up (results in
+week1/outputs/extra_model_comparison.txt).
+Gemma 2B at 214 tokens, Llama 70B at 213, and
+Hermes 405B at
 202 all answered correctly with clean venue names. Hermes 405B used the
 fewest tokens despite being the largest. But the reasoning models were
 worse at this task. Qwen 32B dumped its thinking chain instead of just
